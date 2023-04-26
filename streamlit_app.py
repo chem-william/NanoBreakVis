@@ -4,6 +4,8 @@ import pandas as pd
 import streamlit as st
 import matplotlib.pyplot as plt
 import seaborn as sns
+import mpld3
+import streamlit.components.v1 as components
 
 sns.set_style(style="white")
 sns.set(
@@ -91,10 +93,12 @@ def main() -> None:
     ax_1dhist.set_ylabel("Counts")
     ax_1dhist.set_xlim(log_range)
     ax_1dhist.set_ylim(0)
-    ax_1dhist.set_xlabel(r"Conductance (log$_{10}$(G/G$_0$))")
+    ax_1dhist.set_xlabel(r"Conductance")
     ax_1dhist.spines["top"].set_visible(False)
     ax_1dhist.spines["right"].set_visible(False)
-    g1.pyplot(fig, use_container_width=True)
+    st.subheader("1D-histogram")
+    fig_html = mpld3.fig_to_html(fig)
+    components.html(fig_html, height=800)
 
 
 if __name__ == "__main__":
