@@ -100,11 +100,10 @@ def main() -> None:
     fig, ax_1dhist = plt.subplots()
     for dataset in data_sets:
         if logarize:
-            dataset = np.log10(dataset)
+            dataset = np.log10(dataset, where=dataset > 0)
         histogram, binedges = create_1d_histograms(
             dataset, log_range=log_range, bins=bins
         )
-
         ax_1dhist.plot(binedges, histogram)
 
     ax_1dhist.set_ylabel("Counts")
