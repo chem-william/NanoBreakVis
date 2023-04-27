@@ -94,7 +94,7 @@ def main() -> None:
         "📏 Select range:",
         -15.0,
         10.0,
-        (-10.0, 0.0),
+        (-10.0, -0.5),
         help="Selects the range of the conductance that is used to display the 1D-histogram of the uploaded data",
     )
     fig, ax_1dhist = plt.subplots()
