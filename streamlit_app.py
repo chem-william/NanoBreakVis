@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import mpld3
 from pydantic import ValidationError
+import streamlit_pydantic
 import streamlit.components.v1 as components
 
 from experiment import Experiment, Solvent
@@ -81,33 +82,6 @@ def main() -> None:
             data_sets.append(loaded_dataset)
             progress_bar.progress(idx / len(uploaded_files) * 100, text=progress_text)
 
-    # create json of data
-    exp_data = {
-        "date": date.today(),
-        "name_experimentalist": "John Smith",
-        "name_principal_investigator": "Jane Doe",
-        "method": "Some method",
-        "analyte": {"smiles": "C1=CC=CC=C1", "concentration": 0.1},
-        "temperature": 298.15,
-        "pressure": 1.0,
-        "solvent": {"smiles": "CCO", "supplier": "Sigma-Aldrich"},
-        "bias_voltage": 1.0,
-        "acquisition_rate": 100.0,
-        "pulling_rate": 1.0,
-        "electrode": {
-            "material": "gold",
-            "purity": 99.99,
-            "manufacturer": "Some company",
-            "diameter": 1.0,
-        },
-        "procedure": "Some procedure",
-    }
-    try:
-        experiment = Experiment(**exp_data)
-    except ValidationError as e:
-        st.json(e.json())
-    st.json(experiment.json())
-
     logarize = not col1.checkbox(r"Don't take log$_{10}$ of data")
     bins = col1.slider(
         "📊 Amount of bins:",
@@ -144,6 +118,17 @@ def main() -> None:
     with container1:
         fig_html = mpld3.fig_to_html(fig)
         components.html(fig_html, height=800)
+
+    col2.subheader("Information about dataset")
+    from_model_tab, from_instance_tab = st.tabs(
+        ["Form inputs from model", "Form inputs from instance"]
+    )
+
+    container2 = col2.container()
+    with container2:
+        data = streamlit_pydantic.pydantic_input(key="my_input_model", model=Experiment)
+        with st.expander("Current Input State", expanded=False):
+            st.json(data)
 
 
 if __name__ == "__main__":
