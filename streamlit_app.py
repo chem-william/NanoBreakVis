@@ -58,7 +58,7 @@ def main() -> None:
     with col1.expander("How to Use This"):
         col1.write(Path("README.md").read_text())
 
-    col1.subheader("Upload your CSV from Fidelity")
+    col1.subheader("Upload your CSV from a break-junction experiment")
     uploaded_files = col1.file_uploader(
         "Drag and Drop or Click to Upload", type=".csv", accept_multiple_files=True
     )
