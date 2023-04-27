@@ -4,6 +4,7 @@ from typing import Optional
 from pydantic import BaseModel, Field
 from pydantic import (
     PositiveFloat,
+    NonNegativeFloat,
     conlist,
     constr,
     condate,
@@ -14,7 +15,7 @@ class Solvent(BaseModel):
     """Dataclass for defining the solvent"""
 
     smiles: constr(strip_whitespace=True) = Field(
-        description="A SMILES string of the solvent molecule"
+        ..., title="SMILES", description="A SMILES string of the solvent molecule"
     )
     supplier: Optional[constr(strip_whitespace=True)] = Field(
         "", description="The name of the supplier for the solvent, if applicable"
@@ -44,7 +45,7 @@ class Analyte(BaseModel):
     """Dataclass for defining the analyte"""
 
     smiles: constr(strip_whitespace=True) = Field(
-        ..., description="A SMILES string of the analyte molecule"
+        ..., title="SMILES", description="A SMILES string of the analyte molecule"
     )
     concentration: PositiveFloat = Field(
         ...,
@@ -55,29 +56,30 @@ class Analyte(BaseModel):
 class Experiment(BaseModel):
     """Dataclass for defining an experiment"""
 
-    # date: date = Field(
-    #     ..., description="The date on which the experiment was conducted"
-    # )
+    date: date
     experimentalists: conlist(constr(strip_whitespace=True)) = Field(
-        description="The name(s) of the person(s) who conducted the experiment"
+        title="Experimentalist(s)",
+        description="The name(s) of the person(s) who conducted the experiment",
     )
     principal_investigators: conlist(constr(strip_whitespace=True)) = Field(
+        title="Principal investigator(s)",
         description="The name(s) of the principal investigator(s) responsible for the experiment",
     )
-    temperature: PositiveFloat = Field(
-        ...,
+    temperature: NonNegativeFloat = Field(
+        300.0,
         description="The temperature at which the experiment was conducted. Units: Kelvin (K)",
     )
-    pressure: PositiveFloat = Field(
+    pressure: NonNegativeFloat = Field(
         ...,
         description="The pressure at which the experiment was conducted. Units: XXX (X)",
     )
-    pulling_rate: PositiveFloat = Field(
-        ...,
+    pulling_rate: float = Field(
+        20.0,
+        ge=1e-16,
         description="The pulling rate used in the experiment. Units: nanometers per second (nm/s)",
     )
     acquisition_rate: PositiveFloat = Field(
-        ..., description="The acquisition rate used in the experiment. Units: Hz"
+        40_000, description="The acquisition rate used in the experiment. Units: Hz"
     )
     method: constr(strip_whitespace=True) = Field(
         ..., description="The experimental method used. For example, STM-BJ, MCBJ, etc."
