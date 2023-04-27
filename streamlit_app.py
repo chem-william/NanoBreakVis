@@ -52,18 +52,19 @@ def create_2d_histograms(data, log_range: (float, float), bins: int):
 
 
 def main() -> None:
-    st.title("NanoBreakVis - Visualizing break-junction experiments")
+    col1, col2 = st.columns((3, 1))
+    col1.title("NanoBreakVis - Visualizing break-junction experiments")
 
-    with st.expander("How to Use This"):
-        st.write(Path("README.md").read_text())
+    with col1.expander("How to Use This"):
+        col1.write(Path("README.md").read_text())
 
-    st.subheader("Upload your CSV from Fidelity")
-    uploaded_files = st.file_uploader(
+    col1.subheader("Upload your CSV from Fidelity")
+    uploaded_files = col1.file_uploader(
         "Drag and Drop or Click to Upload", type=".csv", accept_multiple_files=True
     )
     data_sets = []
     if not uploaded_files:
-        st.info(
+        col1.info(
             "Using example data. Upload one or more files above to use your own data!"
         )
         tunneling = load_data("example_tunneling_data.csv")
@@ -71,17 +72,14 @@ def main() -> None:
         molecular = load_data("example_molecular_data.csv")
         data_sets.append(molecular)
     else:
-        st.success("Uploaded your file(s)!")
+        col1.success("Uploaded your file(s)!")
         progress_text = "Loading files(s).."
-        progress_bar = st.progress(0, text=progress_text)
+        progress_bar = col1.progress(0, text=progress_text)
         # uploaded_files = [uploaded_files]  # XXX: hack until decision on multiple files
         for idx, uploaded_file in enumerate(uploaded_files):
             loaded_dataset = load_data(uploaded_file)
             data_sets.append(loaded_dataset)
             progress_bar.progress(idx / len(uploaded_files) * 100, text=progress_text)
-
-    # with st.expander("Raw Dataframe"):
-    #     st.write(df)
 
     # create json of data
     exp_data = {
@@ -110,15 +108,15 @@ def main() -> None:
         st.json(e.json())
     st.json(experiment.json())
 
-    logarize = not st.checkbox(r"Don't take log$_{10}$ of data")
-    bins = st.slider(
+    logarize = not col1.checkbox(r"Don't take log$_{10}$ of data")
+    bins = col1.slider(
         "📊 Amount of bins:",
         4,
         512,
         128,
         help="Selects the amount of bins that are used to create the 1D-histogram of the uploaded data",
     )
-    log_range = st.slider(
+    log_range = col1.slider(
         "📏 Select range:",
         -15.0,
         10.0,
@@ -126,7 +124,6 @@ def main() -> None:
         help="Selects the range of the conductance that is used to display the 1D-histogram of the uploaded data",
     )
     fig, ax_1dhist = plt.subplots()
-    g1, g2 = st.columns((1, 1))
     for dataset in data_sets:
         if logarize:
             dataset = np.log10(dataset)
@@ -142,9 +139,11 @@ def main() -> None:
     ax_1dhist.set_xlabel(r"Conductance")
     ax_1dhist.spines["top"].set_visible(False)
     ax_1dhist.spines["right"].set_visible(False)
-    st.subheader("1D-histogram")
-    fig_html = mpld3.fig_to_html(fig)
-    components.html(fig_html, height=800)
+    col1.subheader("1D-histogram")
+    container1 = col1.container()
+    with container1:
+        fig_html = mpld3.fig_to_html(fig)
+        components.html(fig_html, height=800)
 
 
 if __name__ == "__main__":
