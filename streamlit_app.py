@@ -1,11 +1,15 @@
 from pathlib import Path
+from datetime import date
 import numpy as np
 import pandas as pd
 import streamlit as st
 import matplotlib.pyplot as plt
 import seaborn as sns
 import mpld3
+from pydantic import ValidationError
 import streamlit.components.v1 as components
+
+from experiment import Experiment, Solvent
 
 sns.set_style(style="white")
 sns.set(
@@ -75,6 +79,36 @@ def main() -> None:
             loaded_dataset = load_data(uploaded_file)
             data_sets.append(loaded_dataset)
             progress_bar.progress(idx / len(uploaded_files) * 100, text=progress_text)
+
+    # with st.expander("Raw Dataframe"):
+    #     st.write(df)
+
+    # create json of data
+    exp_data = {
+        "date": date.today(),
+        "name_experimentalist": "John Smith",
+        "name_principal_investigator": "Jane Doe",
+        "method": "Some method",
+        "analyte": {"smiles": "C1=CC=CC=C1", "concentration": 0.1},
+        "temperature": 298.15,
+        "pressure": 1.0,
+        "solvent": {"smiles": "CCO", "supplier": "Sigma-Aldrich"},
+        "bias_voltage": 1.0,
+        "acquisition_rate": 100.0,
+        "pulling_rate": 1.0,
+        "electrode": {
+            "material": "gold",
+            "purity": 99.99,
+            "manufacturer": "Some company",
+            "diameter": 1.0,
+        },
+        "procedure": "Some procedure",
+    }
+    try:
+        experiment = Experiment(**exp_data)
+    except ValidationError as e:
+        st.json(e.json())
+    st.json(experiment.json())
 
     logarize = not st.checkbox(r"Don't take log$_{10}$ of data")
     bins = st.slider("Select amount of bins", 4, 512, 128)
