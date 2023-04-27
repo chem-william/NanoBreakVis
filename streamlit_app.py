@@ -111,8 +111,20 @@ def main() -> None:
     st.json(experiment.json())
 
     logarize = not st.checkbox(r"Don't take log$_{10}$ of data")
-    bins = st.slider("Select amount of bins", 4, 512, 128)
-    log_range = st.slider("Select range:", -15.0, 10.0, (-10.0, 0.0))
+    bins = st.slider(
+        "📊 Amount of bins:",
+        4,
+        512,
+        128,
+        help="Selects the amount of bins that are used to create the 1D-histogram of the uploaded data",
+    )
+    log_range = st.slider(
+        "📏 Select range:",
+        -15.0,
+        10.0,
+        (-10.0, 0.0),
+        help="Selects the range of the conductance that is used to display the 1D-histogram of the uploaded data",
+    )
     fig, ax_1dhist = plt.subplots()
     g1, g2 = st.columns((1, 1))
     for dataset in data_sets:
