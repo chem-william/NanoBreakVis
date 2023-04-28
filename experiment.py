@@ -70,8 +70,8 @@ class Experiment(BaseModel):
         description="The temperature at which the experiment was conducted. Units: Kelvin (K)",
     )
     pressure: NonNegativeFloat = Field(
-        ...,
-        description="The pressure at which the experiment was conducted. Units: XXX (X)",
+        1013.25,
+        description="The pressure at which the experiment was conducted. Units: millibar (mbar)",
     )
     pulling_rate: float = Field(
         20.0,
