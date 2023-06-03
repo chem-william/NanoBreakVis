@@ -116,19 +116,20 @@ def main() -> None:
         fig_html = mpld3.fig_to_html(fig)
         components.html(fig_html, height=800)
 
-    # col2.subheader("Information about dataset")
-    # from_model_tab, from_instance_tab = st.tabs(
-    #     ["Form inputs from model", "Form inputs from instance"]
-    # )
-    #
+        # col2.subheader("Information about dataset")
+        # from_model_tab, from_instance_tab = st.tabs(
+        #     ["Form inputs from model", "Form inputs from instance"]
+        # )
+        #
+        # container2 = col2.container()
+        # with container2:
+
     container2 = col2.container()
     with container2:
+        data = streamlit_pydantic.pydantic_input(key="my_input", model=Experiment)
+        with st.expander("Current Input State", expanded=False):
+            st.json(data)
         with st.form(key="pydantic_form"):
-            data = streamlit_pydantic.pydantic_input(
-                key="my_input_model", model=Experiment
-            )
-            with st.expander("Current Input State", expanded=False):
-                st.json(data)
             submit_button = st.form_submit_button(
                 label="Submit", help="Submit the inputted information"
             )
